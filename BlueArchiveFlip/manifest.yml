@@ -15,7 +15,7 @@ id: cn.sectl.bluearchive
 name: 碧蓝档案招募
 description: 点名与抽奖结束后，以碧蓝档案招募风格展示结果：面板淡入、信件错峰飞入、依次揭名显示学生姓名。
 version: 1.0.0
-apiVersion: 3.1.0
+apiVersion: 3.1.5
 entranceAssembly: SecRandom.BlueArchiveFlip.dll
 author: SECTL
 url: https://github.com/lzy98276/SecRandom-Blue-Archive-Plugins

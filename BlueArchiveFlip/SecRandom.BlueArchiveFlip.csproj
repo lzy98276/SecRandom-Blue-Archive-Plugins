@@ -27,7 +27,7 @@
         <CreateSrpx>true</CreateSrpx>
 
         <!-- 目标主程序 API 版本；manifest.yml 中的 apiVersion 必须与其主版本一致。 -->
-        <SecRandomPluginApiVersion>3.1.0</SecRandomPluginApiVersion>
+        <SecRandomPluginApiVersion>3.1.5</SecRandomPluginApiVersion>
 
         <!-- 本地客户端仓库根目录；仅 UseLocalSdk=true 时使用。 -->
         <SecRandomClientRoot Condition="'$(SecRandomClientRoot)' == ''">D:\code\SecRandom-C</SecRandomClientRoot>
