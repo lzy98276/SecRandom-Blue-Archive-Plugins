@@ -1,0 +1,17 @@
+# 构建产物
+[Bb]in/
+[Oo]bj/
+
+# srpx 打包用的中间目录（产物是 srpx/*.srpx）
+[Ss]rpx-package/
+
+# 本机验证用的宿主副本
+.e2e/
+
+# 本机验证截图
+.verify/
+
+# 临时文件
+*.user
+last-run.txt
+.tests/pack.txt

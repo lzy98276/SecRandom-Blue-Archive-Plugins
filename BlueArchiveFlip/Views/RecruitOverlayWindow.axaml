@@ -1,0 +1,73 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:local="clr-namespace:SecRandom.BlueArchiveFlip.Views"
+        x:Class="SecRandom.BlueArchiveFlip.Views.RecruitOverlayWindow"
+        x:DataType="local:RecruitOverlayWindow"
+        Title="招募结果"
+        CanMaximize="False"
+        CanMinimize="False"
+        CanResize="False"
+        Background="Transparent"
+        ShowInTaskbar="False"
+        Topmost="True"
+        WindowDecorations="None"
+        WindowState="Maximized"
+        TransparencyLevelHint="Transparent">
+
+    <!-- 整块遮罩，点空白处关闭。 -->
+    <Grid x:Name="PART_Backdrop"
+          Background="#02000000"
+          PointerPressed="OnBackdropPressed">
+
+        <StackPanel x:Name="PART_Stage"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Opacity="0"
+                    RenderTransformOrigin="50%,50%">
+            <StackPanel.RenderTransform>
+                <TransformGroup>
+                    <ScaleTransform />
+                    <TranslateTransform />
+                </TransformGroup>
+            </StackPanel.RenderTransform>
+
+            <!-- 顶部立绘装饰，压在面板上沿一点点；图源在代码里从程序集资源赋上。 -->
+            <Image x:Name="PART_Deco"
+                   Width="340"
+                   Margin="0,0,0,-4"
+                   HorizontalAlignment="Center"
+                   Stretch="Uniform" />
+
+            <Border x:Name="PART_Panel"
+                    MinWidth="360"
+                    Padding="28,18,28,16"
+                    BorderThickness="4"
+                    CornerRadius="24">
+                <StackPanel>
+                    <!-- 牌面按可用宽度自动换行；张数多到装不下就上下滚动（滚动条只在需要时出现）。 -->
+                    <ScrollViewer x:Name="PART_Scroll"
+                                  HorizontalScrollBarVisibility="Disabled"
+                                  VerticalScrollBarVisibility="Auto">
+                        <WrapPanel x:Name="PART_Letters"
+                                   HorizontalAlignment="Center"
+                                   Orientation="Horizontal" />
+                    </ScrollViewer>
+
+                    <Border x:Name="PART_Hint"
+                            Height="32"
+                            Margin="0,18,0,0"
+                            Padding="26,0"
+                            HorizontalAlignment="Center"
+                            Background="#FF66CCFF"
+                            CornerRadius="16">
+                        <TextBlock x:Name="PART_HintText"
+                                   VerticalAlignment="Center"
+                                   FontSize="14"
+                                   FontWeight="SemiBold"
+                                   Foreground="#FFFFFFFF" />
+                    </Border>
+                </StackPanel>
+            </Border>
+        </StackPanel>
+    </Grid>
+</Window>

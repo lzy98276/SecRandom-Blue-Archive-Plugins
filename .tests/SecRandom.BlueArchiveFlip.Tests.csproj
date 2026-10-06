@@ -1,0 +1,48 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <!--
+        插件自测工程。不属于插件包的一部分（在 .tests 目录下，不会被 srpx 打包），
+        只用来自动验证两件事：
+          1. BlueArchiveCard.axaml 能被编译产物正确加载、绑定与布局；
+          2. CardFlipAnimator 的定格姿态与层切换符合预期。
+
+        运行：
+          dotnet test .\.tests\SecRandom.BlueArchiveFlip.Tests.csproj -c Release -p:UseSharedCompilation=false
+    -->
+    <PropertyGroup>
+        <TargetFramework>net10.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <LangVersion>latest</LangVersion>
+        <IsPackable>false</IsPackable>
+        <IsTestProject>true</IsTestProject>
+        <AssemblyName>SecRandom.BlueArchiveFlip.Tests</AssemblyName>
+        <RootNamespace>SecRandom.BlueArchiveFlip.Tests</RootNamespace>
+        <!-- 本地客户端仓库的包缓存当作额外源，避免离线时拉不到 Avalonia.Headless.XUnit。 -->
+        <RestoreAdditionalProjectSources>D:\code\SecRandom-C\.nuget\packages</RestoreAdditionalProjectSources>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Avalonia.Headless.XUnit" Version="12.1.1" />
+        <PackageReference Include="Avalonia.Themes.Fluent" Version="12.1.1" />
+        <PackageReference Include="Avalonia.Skia" Version="12.1.1" />
+        <PackageReference Include="Avalonia.Fonts.Inter" Version="12.1.1" />
+        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.8.1" />
+        <PackageReference Include="xunit.v3" Version="3.2.2" />
+        <PackageReference Include="xunit.runner.visualstudio" Version="3.1.5" PrivateAssets="All" />
+        <!--
+            插件在真实宿主里由宿主提供 CommunityToolkit.Mvvm（插件包不含它），
+            但测试进程没有宿主，得自己带一份才能加载插件的视图模型。
+        -->
+        <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.2" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\BlueArchiveFlip\SecRandom.BlueArchiveFlip.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <Using Include="Xunit" />
+    </ItemGroup>
+
+</Project>

@@ -1,0 +1,27 @@
+# SecRandom 插件清单（必须命名为 manifest.yml 并位于包根目录）
+#
+# id                 插件唯一标识；不能包含路径分隔符、"."、".." 或非法字符
+# name               界面上显示的插件名
+# description        插件说明
+# version            插件自身版本
+# apiVersion         目标插件 API 版本；主版本必须与宿主主版本一致（当前宿主为 3.x）
+# entranceAssembly   入口程序集文件名；不能是绝对路径，也不能包含 ".."
+# author             作者
+# url                项目主页（可选）
+# icon               图标文件名（可选，默认 icon.png）
+# readme             说明文件名（可选，默认 README.md）
+# supportedPlatforms 支持平台（可选：Windows / Linux / MacOS）
+id: cn.sectl.bluearchive
+name: 碧蓝档案招募
+description: 点名与抽奖结束后，以碧蓝档案招募风格展示结果：面板淡入、信件错峰飞入、依次揭名显示学生姓名。
+version: 1.0.0
+apiVersion: 3.1.0
+entranceAssembly: SecRandom.BlueArchiveFlip.dll
+author: SECTL
+url: https://github.com/lzy98276/SecRandom-Blue-Archive-Plugins
+icon: icon.png
+readme: README.md
+supportedPlatforms:
+  - Windows
+  - Linux
+  - MacOS

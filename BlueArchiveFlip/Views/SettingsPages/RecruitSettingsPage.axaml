@@ -1,0 +1,219 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="clr-namespace:SecRandom.BlueArchiveFlip.ViewModels"
+             x:Class="SecRandom.BlueArchiveFlip.Views.SettingsPages.RecruitSettingsPage"
+             x:DataType="vm:RecruitSettingsViewModel"
+             x:CompileBindings="True">
+
+    <UserControl.Styles>
+        <Style Selector="Border.ba-section">
+            <Setter Property="Background" Value="{DynamicResource CardBackgroundFillColorDefaultBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource ControlElevationBorderBrush}" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="CornerRadius" Value="8" />
+            <Setter Property="Padding" Value="18,14" />
+            <Setter Property="Margin" Value="0,0,0,12" />
+        </Style>
+        <Style Selector="TextBlock.ba-title">
+            <Setter Property="FontSize" Value="16" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="Margin" Value="0,0,0,10" />
+        </Style>
+        <Style Selector="TextBlock.ba-label">
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="Opacity" Value="0.85" />
+        </Style>
+        <Style Selector="TextBlock.ba-hint">
+            <Setter Property="FontSize" Value="12" />
+            <Setter Property="Opacity" Value="0.6" />
+            <Setter Property="TextWrapping" Value="Wrap" />
+        </Style>
+        <Style Selector="TextBlock.ba-value">
+            <Setter Property="FontSize" Value="12" />
+            <Setter Property="Opacity" Value="0.75" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="MinWidth" Value="72" />
+        </Style>
+        <Style Selector="Slider.ba-slider">
+            <Setter Property="MinWidth" Value="260" />
+        </Style>
+    </UserControl.Styles>
+
+    <ScrollViewer>
+        <StackPanel Margin="20" MaxWidth="960" HorizontalAlignment="Left">
+
+            <TextBlock FontSize="22" FontWeight="SemiBold" Text="碧蓝档案招募" />
+            <TextBlock Margin="0,6,0,16"
+                       Classes="ba-hint"
+                       Text="本插件的翻牌已接进主程序的「动画样式」下拉：在设置 → 默认抽取设置 → 动画样式 里选中「碧蓝档案招募」之后，整条抽签演出都交给插件——抽取中先摆好牌面、信封错峰飞入，揭晓时再逐张揭名，动画就地演在主程序自己的结果区里。点名 / 抽奖 / 快捷抽签三页各自的动画样式要打开该页的「覆盖动画设置」才生效；选主程序自己的三种动画时插件完全不介入。" />
+
+            <!-- 开关 -->
+            <Border Classes="ba-section">
+                <StackPanel>
+                    <TextBlock Classes="ba-title" Text="总开关" />
+                    <CheckBox x:Name="EnabledCheck"
+                              Click="OnToggleCommit"
+                              Content="抽签时由插件演完整条翻牌流程"
+                              IsChecked="{Binding Enabled}" />
+                    <TextBlock Margin="0,8,0,0"
+                               Classes="ba-hint"
+                               Text="上面选中插件的动画样式、并且这里保持勾选时才会接管整条演出；这里关掉后插件完全不介入，主程序自己的动画照旧。" />
+                </StackPanel>
+            </Border>
+
+            <!-- 稀有度 -->
+            <Border Classes="ba-section">
+                <StackPanel>
+                    <TextBlock Classes="ba-title" Text="信封稀有度" />
+                    <TextBlock Classes="ba-hint"
+                               Text="主程序的学生数据里没有稀有度字段，所以默认所有信都用同一个档位；只有你的名单在「标签」里写了 1 / 2 / 3 时，「按标签猜」才有意义。" />
+                    <Grid Margin="0,12,0,0" ColumnDefinitions="Auto,220">
+                        <TextBlock Classes="ba-label" Text="决定方式" />
+                        <ComboBox x:Name="RarityModeBox"
+                                  Grid.Column="1"
+                                  HorizontalAlignment="Stretch"
+                                  SelectedIndex="{Binding RarityModeIndex}"
+                                  SelectionChanged="OnSelectionChanged">
+                            <ComboBoxItem Content="统一档位" />
+                            <ComboBoxItem Content="按标签猜" />
+                        </ComboBox>
+                    </Grid>
+                    <Grid Margin="0,8,0,0" ColumnDefinitions="Auto,220">
+                        <TextBlock Classes="ba-label" Text="统一档位" />
+                        <ComboBox x:Name="RarityBox"
+                                  Grid.Column="1"
+                                  HorizontalAlignment="Stretch"
+                                  SelectedIndex="{Binding UniformRarityIndex}"
+                                  SelectionChanged="OnSelectionChanged">
+                            <ComboBoxItem Content="一星 · 蓝" />
+                            <ComboBoxItem Content="二星 · 金" />
+                            <ComboBoxItem Content="三星 · 虹" />
+                        </ComboBox>
+                    </Grid>
+                </StackPanel>
+            </Border>
+
+            <!-- 面板外观 -->
+            <Border Classes="ba-section">
+                <StackPanel>
+                    <TextBlock Classes="ba-title" Text="面板外观" />
+
+                    <Grid ColumnDefinitions="140,*,72">
+                        <TextBlock Classes="ba-label" Text="不透明度" />
+                        <Slider Grid.Column="1"
+                                Classes="ba-slider"
+                                Maximum="{Binding OpacityMax}"
+                                Minimum="{Binding OpacityMin}"
+                                PointerCaptureLost="OnSliderCommit"
+                                Value="{Binding PanelOpacity}" />
+                        <TextBlock Grid.Column="2" Classes="ba-value" Text="{Binding PanelOpacity, StringFormat='{}{0:P0}'}" />
+                    </Grid>
+
+                    <Grid Margin="0,8,0,0" ColumnDefinitions="140,*">
+                        <TextBlock Classes="ba-label" Text="底色" />
+                        <TextBox Grid.Column="1" Text="{Binding PanelBackground}" />
+                    </Grid>
+                    <Grid Margin="0,8,0,0" ColumnDefinitions="140,*">
+                        <TextBlock Classes="ba-label" Text="描边色" />
+                        <TextBox Grid.Column="1" Text="{Binding PanelBorderColor}" />
+                    </Grid>
+                    <CheckBox Margin="0,10,0,0"
+                              Click="OnToggleCommit"
+                              Content="显示顶部立绘装饰"
+                              IsChecked="{Binding ShowDeco}" />
+                    <Grid Margin="0,8,0,0" ColumnDefinitions="140,*,72">
+                        <TextBlock Classes="ba-label" Text="面板入场时长" />
+                        <Slider Grid.Column="1"
+                                Classes="ba-slider"
+                                Maximum="{Binding PanelDurationMax}"
+                                Minimum="0"
+                                PointerCaptureLost="OnSliderCommit"
+                                Value="{Binding PanelDurationMs}" />
+                        <TextBlock Grid.Column="2" Classes="ba-value" Text="{Binding PanelDurationMs, StringFormat='{}{0:0} ms'}" />
+                    </Grid>
+                </StackPanel>
+            </Border>
+
+            <!-- 时间线 -->
+            <Border Classes="ba-section">
+                <StackPanel>
+                    <TextBlock Classes="ba-title" Text="时间线" />
+
+                    <Grid ColumnDefinitions="140,*,72">
+                        <TextBlock Classes="ba-label" Text="错峰延迟" />
+                        <Slider Grid.Column="1"
+                                Classes="ba-slider"
+                                Maximum="{Binding CardDelayMax}"
+                                Minimum="0"
+                                PointerCaptureLost="OnSliderCommit"
+                                Value="{Binding CardDelayMs}" />
+                        <TextBlock Grid.Column="2" Classes="ba-value" Text="{Binding CardDelayMs, StringFormat='{}{0:0} ms'}" />
+                    </Grid>
+
+                    <Grid Margin="0,8,0,0" ColumnDefinitions="140,*,72">
+                        <TextBlock Classes="ba-label" Text="飞入时长" />
+                        <Slider Grid.Column="1"
+                                Classes="ba-slider"
+                                Maximum="{Binding CardDurationMax}"
+                                Minimum="{Binding CardDurationMin}"
+                                PointerCaptureLost="OnSliderCommit"
+                                Value="{Binding CardDurationMs}" />
+                        <TextBlock Grid.Column="2" Classes="ba-value" Text="{Binding CardDurationMs, StringFormat='{}{0:0} ms'}" />
+                    </Grid>
+
+                    <Grid Margin="0,8,0,0" ColumnDefinitions="140,*,72">
+                        <TextBlock Classes="ba-label" Text="揭名延迟" />
+                        <Slider Grid.Column="1"
+                                Classes="ba-slider"
+                                Maximum="{Binding RevealDelayMax}"
+                                Minimum="0"
+                                PointerCaptureLost="OnSliderCommit"
+                                Value="{Binding RevealDelayMs}" />
+                        <TextBlock Grid.Column="2" Classes="ba-value" Text="{Binding RevealDelayMs, StringFormat='{}{0:0} ms'}" />
+                    </Grid>
+
+                    <Grid Margin="0,8,0,0" ColumnDefinitions="140,*,72">
+                        <TextBlock Classes="ba-label" Text="揭名时长" />
+                        <Slider Grid.Column="1"
+                                Classes="ba-slider"
+                                Maximum="{Binding RevealDurationMax}"
+                                Minimum="{Binding RevealDurationMin}"
+                                PointerCaptureLost="OnSliderCommit"
+                                Value="{Binding RevealDurationMs}" />
+                        <TextBlock Grid.Column="2" Classes="ba-value" Text="{Binding RevealDurationMs, StringFormat='{}{0:0} ms'}" />
+                    </Grid>
+
+                    <Grid Margin="0,8,0,0" ColumnDefinitions="140,*,72">
+                        <TextBlock Classes="ba-label" Text="自动关闭" />
+                        <Slider Grid.Column="1"
+                                Classes="ba-slider"
+                                Maximum="{Binding AutoCloseMax}"
+                                Minimum="0"
+                                PointerCaptureLost="OnSliderCommit"
+                                Value="{Binding AutoCloseSeconds}" />
+                        <TextBlock Grid.Column="2" Classes="ba-value" Text="{Binding AutoCloseSeconds, StringFormat='{}{0:0} s'}" />
+                    </Grid>
+
+                    <TextBlock Margin="0,10,0,0" Classes="ba-hint" Text="{Binding TimelineSummary}" />
+                    <TextBlock Margin="0,4,0,0"
+                               Classes="ba-hint"
+                               Text="牌面按结果区的宽度自动换行，装不下可以在结果区里上下滚动；抽到几张就展示几张，不再截断。" />
+                </StackPanel>
+            </Border>
+
+            <!-- 运行情况 -->
+            <Border Classes="ba-section">
+                <StackPanel>
+                    <TextBlock Classes="ba-title" Text="运行情况" />
+                    <TextBlock Classes="ba-hint" Text="{Binding LastMessage}" />
+                    <TextBlock Margin="0,4,0,0" Classes="ba-hint" Text="{Binding StatusMessage}" />
+                    <TextBlock Margin="0,10,0,0" Classes="ba-hint" Text="{Binding StateFilePath}" />
+                    <StackPanel Margin="0,12,0,0" Orientation="Horizontal" Spacing="10">
+                        <Button x:Name="SaveButton" Click="OnSaveClick" Content="保存参数" />
+                        <Button x:Name="RestoreButton" Click="OnRestoreDefaultsClick" Content="恢复默认" />
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

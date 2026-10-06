@@ -1,0 +1,100 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <!--
+        碧蓝档案翻牌插件的构建配置。
+
+        SDK 引用有两种方式：
+
+        1. 默认（推荐给插件作者）：引用 NuGet 上的 SecRandom.PluginSdk 包。
+           SDK 版本跟随主程序版本，当前主程序为 3.1.0，因此这里固定 3.1.0。
+
+        2. 开发中的客户端（未发布）：加上 /p:UseLocalSdk=true 改为引用本地克隆的
+           SecRandom.PluginSdk 项目，可在 SDK 尚未发布时先跑通构建。
+    -->
+    <PropertyGroup>
+        <TargetFramework>net10.0</TargetFramework>
+        <Nullable>enable</Nullable>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <LangVersion>latest</LangVersion>
+
+        <AssemblyName>SecRandom.BlueArchiveFlip</AssemblyName>
+        <RootNamespace>SecRandom.BlueArchiveFlip</RootNamespace>
+
+        <!-- 插件由宿主手动加载，生成 .deps.json 便于动态加载。 -->
+        <EnableDynamicLoading>true</EnableDynamicLoading>
+
+        <!-- 让 SDK 的 targets 在 Build 后自动产出 srpx/<Project>.srpx 包。 -->
+        <CreateSrpx>true</CreateSrpx>
+
+        <!-- 目标主程序 API 版本；manifest.yml 中的 apiVersion 必须与其主版本一致。 -->
+        <SecRandomPluginApiVersion>3.1.0</SecRandomPluginApiVersion>
+
+        <!-- 本地客户端仓库根目录；仅 UseLocalSdk=true 时使用。 -->
+        <SecRandomClientRoot Condition="'$(SecRandomClientRoot)' == ''">D:\code\SecRandom-C</SecRandomClientRoot>
+        <UseLocalSdk Condition="'$(UseLocalSdk)' == ''">false</UseLocalSdk>
+        <SecRandomSdkProject Condition="'$(SecRandomSdkProject)' == ''">$(SecRandomClientRoot)\SecRandom.PluginSdk\SecRandom.PluginSdk.csproj</SecRandomSdkProject>
+    </PropertyGroup>
+
+    <!-- 开发中的客户端：直接引用 SDK 项目。 -->
+    <ItemGroup Condition="'$(UseLocalSdk)' == 'true' And Exists('$(SecRandomSdkProject)')">
+        <!--
+            Private=false：SecRandom.PluginSdk / SecRandom.Core 都是宿主程序集，
+            绝不能被复制进插件包（宿主会在自己的加载上下文中提供它们）。
+        -->
+        <ProjectReference Include="$(SecRandomSdkProject)">
+            <Private>false</Private>
+            <ExcludeAssets>runtime;native</ExcludeAssets>
+        </ProjectReference>
+    </ItemGroup>
+
+    <!-- 已发布的 SDK：引用 NuGet 包，ExcludeAssets 确保宿主程序集不随插件打包。 -->
+    <ItemGroup Condition="'$(UseLocalSdk)' != 'true' Or !Exists('$(SecRandomSdkProject)')">
+        <PackageReference Include="SecRandom.PluginSdk" Version="3.1.0">
+            <ExcludeAssets>runtime;native</ExcludeAssets>
+        </PackageReference>
+    </ItemGroup>
+
+    <!-- 页面使用 Avalonia XAML；Avalonia 由宿主提供，不随插件打包。 -->
+    <ItemGroup>
+        <PackageReference Include="Avalonia" Version="12.1.1">
+            <ExcludeAssets>runtime;native</ExcludeAssets>
+        </PackageReference>
+    </ItemGroup>
+
+    <!--
+        结果动画用的图片资源（信件底图、顶部立绘装饰）以程序集资源内嵌。
+
+        这里刻意不用 <AvaloniaResource> / avares://：宿主会把插件程序集装进
+        PluginLoadContext 这个独立的 AssemblyLoadContext（见宿主
+        SecRandom\Services\Plugins\PluginLoadContext.cs），而 Avalonia 的
+        StandardAssetLoader 是按程序集名去默认上下文里找的，avares:// 在那种情况下
+        可能解析不到。用程序集资源（EmbeddedResource）则由程序集自己的清单提供，
+        跟加载上下文无关，一定能取到。
+    -->
+    <ItemGroup>
+        <EmbeddedResource Include="Assets\**" />
+    </ItemGroup>
+
+    <!--
+        插件清单、图标与说明必须位于包根目录，宿主据此加载入口程序集。
+    -->
+    <ItemGroup>
+        <None Update="manifest.yml">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="README.md">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="icon.png">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+    </ItemGroup>
+
+    <!--
+        本地 SDK 模式（UseLocalSdk=true）：手动导入 SDK 的 targets。
+        NuGet 模式由包自动导入；本地模式不导入的话，Build 之后不会产出 srpx 包。
+    -->
+    <Import Project="$(SecRandomClientRoot)\SecRandom.PluginSdk\SecRandom.PluginSdk.targets"
+            Condition="'$(UseLocalSdk)' == 'true' And Exists('$(SecRandomClientRoot)\SecRandom.PluginSdk\SecRandom.PluginSdk.targets')" />
+
+</Project>

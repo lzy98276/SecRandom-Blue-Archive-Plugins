@@ -1,0 +1,62 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="clr-namespace:SecRandom.BlueArchiveFlip.Controls"
+             x:Class="SecRandom.BlueArchiveFlip.Controls.RecruitLetter"
+             x:DataType="local:RecruitLetter"
+             Width="168"
+             Height="126">
+
+    <!--
+        一张招募信。三层：
+          PART_Root       整个卡片，统一 15° 倾斜 + 入场缩放/位移
+          PART_Letter     信封底图，稀有度决定用哪张
+          PART_NameLayer  白底名牌，揭名前 Opacity=0，揭名时 0.96→1.0 弹出
+
+        注意：整张卡的淡入写在 RecruitLetter 自身的 Opacity 上（ApplyCardEnter），
+        这里不要给 PART_Root 写死 Opacity，否则两层透明度相乘，卡片永远是全透明的。
+    -->
+    <Grid x:Name="PART_Root"
+          Width="168"
+          Height="126"
+          RenderTransformOrigin="50%,50%">
+        <Grid.RenderTransform>
+            <TransformGroup>
+                <ScaleTransform />
+                <TranslateTransform />
+                <RotateTransform />
+            </TransformGroup>
+        </Grid.RenderTransform>
+
+        <Image x:Name="PART_Letter"
+               Width="168"
+               Height="126"
+               Stretch="Uniform" />
+
+        <Grid x:Name="PART_NameLayer"
+              Width="134"
+              Height="82"
+              HorizontalAlignment="Center"
+              VerticalAlignment="Center"
+              Opacity="0"
+              RenderTransformOrigin="50%,50%">
+            <Grid.RenderTransform>
+                <TransformGroup>
+                    <ScaleTransform />
+                    <TranslateTransform />
+                </TransformGroup>
+            </Grid.RenderTransform>
+
+            <Border Background="#FFFFFFFF"
+                    BoxShadow="0 4 10 0 #33000000"
+                    CornerRadius="11" />
+
+            <TextBlock x:Name="PART_Name"
+                       Padding="6,3,6,3"
+                       FontWeight="Bold"
+                       Foreground="#FF1C2741"
+                       Text="{Binding DisplayName, RelativeSource={RelativeSource AncestorType=local:RecruitLetter}}"
+                       TextAlignment="Center"
+                       TextWrapping="Wrap" />
+        </Grid>
+    </Grid>
+</UserControl>
